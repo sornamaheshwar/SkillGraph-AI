@@ -3,7 +3,9 @@
 A graph-powered skill intelligence and career planning platform that helps users analyze their current skills, identify skill gaps for a target role, explore learning paths, and discover relevant projects.
 
 SkillGraph AI uses a graph database to model relationships between users, skills, job roles, prerequisites, and projects, allowing the application to generate structured career insights.
+## 🚀 Live Demo
 
+[Visit SkillGraph AI](https://skill-graph-ai-self.vercel.app/)
 ---
 
 ## 🚀 Features
