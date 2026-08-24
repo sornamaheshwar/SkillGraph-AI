@@ -20,6 +20,8 @@ function App() {
   const [activePage, setActivePage] = useState("dashboard");
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // ============================================================
   // FETCH DASHBOARD + SKILL GAP DATA
   // ============================================================
@@ -52,7 +54,6 @@ function App() {
     const loadInitialData = async () => {
       try {
         setLoading(true);
-
         await fetchDashboardData();
       } finally {
         setLoading(false);
@@ -83,6 +84,7 @@ function App() {
   const handleNavigation = (page) => {
     setSelectedProjectId(null);
     setActivePage(page);
+    setMobileMenuOpen(false);
   };
 
   // ============================================================
@@ -115,7 +117,6 @@ function App() {
     return (
       <div className="app-state">
         <div className="loader"></div>
-
         <p>Analyzing your skill graph...</p>
       </div>
     );
@@ -141,19 +142,36 @@ function App() {
 
   return (
     <div className="app">
+      {/* ================= MOBILE MENU ================= */}
+
+      <button
+        className="mobile-menu-button"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Toggle navigation menu"
+      >
+        {mobileMenuOpen ? "✕" : "☰"}
+      </button>
+
+      {mobileMenuOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
       {/* ================= SIDEBAR ================= */}
 
-      <aside className="sidebar">
+      <aside
+        className={`sidebar ${
+          mobileMenuOpen ? "mobile-open" : ""
+        }`}
+      >
         <div className="logo">
           <div className="logo-icon">S</div>
           <span>SkillGraph</span>
         </div>
 
         <nav className="nav-menu">
-
-          {/* DASHBOARD */}
-
           <button
             className={`nav-item ${
               activePage === "dashboard" ? "active" : ""
@@ -163,8 +181,6 @@ function App() {
             <span>▦</span>
             Dashboard
           </button>
-
-          {/* PROFILE */}
 
           <button
             className={`nav-item ${
@@ -176,8 +192,6 @@ function App() {
             Profile
           </button>
 
-          {/* SKILL GAP */}
-
           <button
             className={`nav-item ${
               activePage === "skill-gap" ? "active" : ""
@@ -188,8 +202,6 @@ function App() {
             Skill Gap
           </button>
 
-          {/* LEARNING PATHS */}
-
           <button
             className={`nav-item ${
               activePage === "learning-paths" ? "active" : ""
@@ -199,8 +211,6 @@ function App() {
             <span>↗</span>
             Learning Paths
           </button>
-
-          {/* PROJECTS */}
 
           <button
             className={`nav-item ${
@@ -241,8 +251,6 @@ function App() {
 
       <main className="main-content">
 
-        {/* ================= DASHBOARD ================= */}
-
         {activePage === "dashboard" && (
           <>
             <header className="topbar">
@@ -259,8 +267,6 @@ function App() {
                 Graph Connected
               </div>
             </header>
-
-            {/* ================= HERO ================= */}
 
             <section className="hero-card">
               <div>
@@ -297,35 +303,22 @@ function App() {
               </div>
             </section>
 
-            {/* ================= STATS ================= */}
-
             <section className="stats-grid">
               <div className="stat-card">
                 <p>Total Required Skills</p>
-
-                <h3>
-                  {dashboard?.total_required_skills ?? 0}
-                </h3>
+                <h3>{dashboard?.total_required_skills ?? 0}</h3>
               </div>
 
               <div className="stat-card">
                 <p>Skills Acquired</p>
-
-                <h3>
-                  {dashboard?.acquired_skills ?? 0}
-                </h3>
+                <h3>{dashboard?.acquired_skills ?? 0}</h3>
               </div>
 
               <div className="stat-card highlight-card">
                 <p>Skills To Learn</p>
-
-                <h3>
-                  {dashboard?.missing_skills ?? 0}
-                </h3>
+                <h3>{dashboard?.missing_skills ?? 0}</h3>
               </div>
             </section>
-
-            {/* ================= SKILL DISTRIBUTION ================= */}
 
             <section className="skill-progress-card">
               <div className="progress-header">
@@ -354,9 +347,7 @@ function App() {
               <div className="progress-legend">
                 <div>
                   <span className="legend-dot acquired"></span>
-
                   Acquired Skills
-
                   <strong>
                     {dashboard?.acquired_skills ?? 0}
                   </strong>
@@ -364,9 +355,7 @@ function App() {
 
                 <div>
                   <span className="legend-dot missing"></span>
-
                   Skills Remaining
-
                   <strong>
                     {dashboard?.missing_skills ?? 0}
                   </strong>
@@ -377,8 +366,6 @@ function App() {
                 </span>
               </div>
             </section>
-
-            {/* ================= SKILL GAP PREVIEW ================= */}
 
             <section className="section-header">
               <div>
@@ -425,13 +412,9 @@ function App() {
                     <h3>{skill.name}</h3>
 
                     <div className="skill-footer">
-                      <span>
-                        Missing from profile
-                      </span>
+                      <span>Missing from profile</span>
 
-                      <span className="arrow">
-                        →
-                      </span>
+                      <span className="arrow">→</span>
                     </div>
                   </div>
                 ))}
@@ -440,35 +423,23 @@ function App() {
           </>
         )}
 
-        {/* ================= PROFILE PAGE ================= */}
-
         {activePage === "profile" && (
           <Profile
             onProfileUpdate={fetchDashboardData}
           />
         )}
 
-        {/* ================= SKILL GAP PAGE ================= */}
-
-        {activePage === "skill-gap" && (
-          <SkillGap />
-        )}
-
-        {/* ================= LEARNING PATHS PAGE ================= */}
+        {activePage === "skill-gap" && <SkillGap />}
 
         {activePage === "learning-paths" && (
           <LearningPaths />
         )}
-
-        {/* ================= PROJECTS PAGE ================= */}
 
         {activePage === "projects" && (
           <Projects
             onSelectProject={handleSelectProject}
           />
         )}
-
-        {/* ================= PROJECT DETAILS PAGE ================= */}
 
         {activePage === "project-details" &&
           selectedProjectId && (
@@ -477,7 +448,6 @@ function App() {
               onBack={handleBackToProjects}
             />
           )}
-
       </main>
     </div>
   );
