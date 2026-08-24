@@ -1,0 +1,32 @@
+# Environment variables
+.env
+.env.*
+
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# PyCharm
+.idea/
+*.iml
+
+# Node
+node_modules/
+dist/
+
+# Environment files
+frontend/.env
+frontend/.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
