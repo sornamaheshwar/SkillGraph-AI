@@ -1,13 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.app.core.config import settings
 from backend.app.core.database import db
+
 from backend.app.routers.roles import router as roles_router
 from backend.app.routers.dashboard import router as dashboard_router
 from backend.app.routers.skills import router as skills_router
 from backend.app.routers.projects import router as projects_router
-from backend.app.routers.learning_paths import router as learning_paths_router
+from backend.app.routers.learning_paths import (
+    router as learning_paths_router,
+)
 from backend.app.routers.profile import router as profile_router
+
+
 app = FastAPI(
     title="SkillGraph AI",
     description="Graph-powered skill intelligence and career planning platform.",
@@ -23,6 +29,11 @@ origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Add deployed frontend URL if configured
+if settings.frontend_url:
+    origins.append(settings.frontend_url)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -62,6 +73,8 @@ app.include_router(skills_router)
 app.include_router(projects_router)
 app.include_router(learning_paths_router)
 app.include_router(profile_router)
+
+
 # ============================================================
 # BASIC ENDPOINTS
 # ============================================================
@@ -75,6 +88,16 @@ def root():
 
 @app.get("/health")
 def health():
-    return {
-        "status": "healthy"
-    }
+    try:
+        db.driver.verify_connectivity()
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+        }
+
+    except Exception:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+        }
